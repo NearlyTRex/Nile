@@ -102,6 +102,8 @@ class CLI:
         )
 
     def handle_details(self):
+        if self.auth_manager.is_logged_in() and self.auth_manager.is_token_expired():
+            self.auth_manager.refresh_token()
         games = self.config.get("library")
         games.sort(key=self.sort_by_title)
         matching_game = None
@@ -112,8 +114,10 @@ class CLI:
         if not matching_game:
             self.logger.error("Couldn't find what you are looking for")
             return
-        matching_game["versions"] = self.library_manager.get_versions([self.arguments.id]) or {}
-        print(matching_game)
+        versions = self.library_manager.get_versions([self.arguments.id]) or {}
+        if self.arguments.id in versions:
+            matching_game["version"] = versions[self.arguments.id]
+        print(json.dumps(matching_game))
 
     def handle_library(self):
         cmd = self.arguments.sub_command
