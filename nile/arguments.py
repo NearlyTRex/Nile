@@ -37,9 +37,14 @@ def get_arguments():
     library_parser.add_argument("--force", "-f", action="store_true", help="Force the action")
     library_parser.add_argument(
         "--installed", "-i", action="store_true", help="List only installed games...    "
-        
+
     )
-   
+
+    details_parser = sub_parsers.add_parser(
+        "details", help="Show game details"
+    )
+    details_parser.add_argument("id", help="Specify a ID of the game to be detailed")
+
     install_parser = sub_parsers.add_parser(
         "install", aliases=["update", "verify"], help="Install a game"
         
@@ -55,7 +60,7 @@ def get_arguments():
         "--path", dest="exact_path", help="Specify exact install location"
     )
     install_parser.add_argument(
-        '--info', '-i', action="store_true", help="Print game install info instead of downloading" 
+        '--info', '-i', action="store_true", help="Print game install info instead of downloading"
     )
     install_parser.add_argument(
         '--json', '-j', action="store_true", help="Print info in JSON format"

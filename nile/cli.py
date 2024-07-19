@@ -74,7 +74,7 @@ class CLI:
             print(json.dumps({'Username': account, 'LoggedIn': logged_in}))
             return False
         self.logger.error("Specify auth action, use --help")
-    
+
     def handle_register(self):
         if self.auth_manager.is_logged_in():
             self.logger.error("You are already logged in")
@@ -107,6 +107,20 @@ class CLI:
             if element["product"].get("title") is not None
             else ""
         ).lower()
+
+    def handle_details(self):
+        games = self.config.get("library")
+        games.sort(key=self.sort_by_title)
+        matching_game = None
+        for game in games:
+            if game["product"]["id"] == self.arguments.id:
+                matching_game = game
+                break
+        if not matching_game:
+            self.logger.error("Couldn't find what you are looking for")
+            return
+        matching_game["versions"] = self.library_manager.get_versions([self.arguments.id]) or {}
+        print(matching_game)
 
     def handle_library(self):
         cmd = self.arguments.sub_command
@@ -264,7 +278,7 @@ class CLI:
     def handle_uninstall(self):
         uninstaller = Uninstaller(self.config, self.arguments)
         uninstaller.uninstall()
-    
+
     def handle_import(self):
         id = self.arguments.id
         if not id:
@@ -275,7 +289,7 @@ class CLI:
         if not path:
             self.logger.error("--path is required")
             return
-        
+
         if self.auth_manager.is_logged_in() and self.auth_manager.is_token_expired():
             self.auth_manager.refresh_token()
 
@@ -310,7 +324,7 @@ class CLI:
             matching_game, path, self.config, self.library_manager, self.session, self.download_manager
         )
         importer.import_game()
- 
+
 def main():
     (arguments, unknown_arguments), parser = get_arguments()
     if arguments.version:
@@ -341,6 +355,8 @@ def main():
         cli.handle_register()
     elif command == "library":
         cli.handle_library()
+    elif command == "details":
+        cli.handle_details()
     elif command in ["install", "verify", "update"]:
         cli.handle_install()
     elif command == "list-updates":
