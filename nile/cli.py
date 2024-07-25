@@ -73,6 +73,10 @@ class CLI:
             logged_in = account != '<not logged in>'
             print(json.dumps({'Username': account, 'LoggedIn': logged_in}))
             return False
+        elif self.arguments.refresh:
+            if self.auth_manager.is_logged_in() and self.auth_manager.is_token_expired():
+                self.auth_manager.refresh_token()
+            return True
         self.logger.error("Specify auth action, use --help")
 
     def handle_register(self):
@@ -344,6 +348,8 @@ def main():
         level=logging_level, format="%(levelname)s [%(name)s]:\t %(message)s"
     )
     logger = logging.getLogger("CLI")
+    if arguments.quiet:
+        logger.setLevel(logging.CRITICAL)
 
     config_manager = Config()
     session_manager = session.APIHandler(config_manager)
