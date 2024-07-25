@@ -109,8 +109,6 @@ class CLI:
         ).lower()
 
     def handle_details(self):
-        if self.auth_manager.is_logged_in() and self.auth_manager.is_token_expired():
-            self.auth_manager.refresh_token()
         games = self.config.get("library")
         games.sort(key=self.sort_by_title)
         matching_game = None
