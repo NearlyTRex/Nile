@@ -10,6 +10,12 @@ def get_arguments():
         action="store_true",
         help="Display nile version",
     )
+    parser.add_argument(
+        "--quiet",
+        dest="quiet",
+        action="store_true",
+        help="Run command quietly",
+    )
     sub_parsers = parser.add_subparsers(dest="command")
 
     auth_parser = sub_parsers.add_parser("auth", help="Authorization related things")
@@ -17,6 +23,9 @@ def get_arguments():
     auth_parser.add_argument("--non-interactive", action="store_true", help="Display login data as JSON. Use `nile register` to finish login")
     auth_parser.add_argument(
         "--logout", action="store_true", help="Logout from the accout and deregister"
+    )
+    auth_parser.add_argument(
+        "--refresh", action="store_true", help="Refresh account token"
     )
 
     register_parser = sub_parsers.add_parser("register", help="Register device after web login")
