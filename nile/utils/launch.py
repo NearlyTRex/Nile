@@ -20,6 +20,7 @@ class LaunchInstruction:
         self.version = str()
         self.command = str()
         self.arguments = list()
+        self.cwd = str()
 
     @classmethod
     def parse(cls, game_path, path, unknown_arguments):
@@ -32,6 +33,10 @@ class LaunchInstruction:
         instruction.command = os.path.join(game_path, json_data["Main"]["Command"].replace("\\", os.sep))
         instruction.arguments = json_data["Main"].get("Args") or list()
         instruction.arguments.extend(unknown_arguments)
+        instruction.cwd = game_path
+        working_dir_override = json_data["Main"].get("WorkingSubdirOverride")
+        if working_dir_override:
+            instruction.cwd = os.path.join(game_path, working_dir_override.replace("\\", os.sep))
         return instruction
 
 
@@ -160,7 +165,7 @@ class Launcher:
             scummvm_command = self.get_scummvm_command()
             if instruction.command.lower().endswith("scummvm.exe") and len(scummvm_command) > 0:
                 self.logger.info(f"Using native scummvm {scummvm_command}")
-                command.extend(scummvm_command)
+                command = scummvm_command
                 command.extend(instruction.arguments)
             else:
                 if not self.dont_use_wine and not self.bottle:
@@ -189,7 +194,7 @@ class Launcher:
             if result == -1:
                 print("PR_SET_CHILD_SUBREAPER is not supported by your kernel (Linux 3.4 and above)")
 
-            process = subprocess.Popen(command, cwd=game_path, env=self.env)
+            process = subprocess.Popen(command, cwd=instruction.cwd, env=self.env)
             process_pid = process.pid
 
             def iterate_processes():
@@ -255,7 +260,7 @@ class Launcher:
 
 
         else:
-            process = subprocess.Popen(command, cwd=game_path, env=self.env)
+            process = subprocess.Popen(command, cwd=instruction.cwd, env=self.env)
             status = process.wait()
 
         sys.exit(status)
