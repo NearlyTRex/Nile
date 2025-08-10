@@ -103,7 +103,7 @@ class CLI:
             element["product"].get("title")
             if element["product"].get("title") is not None
             else ""
-        )
+        ).lower()
 
     def handle_details(self):
         games = self.config.get("library")
