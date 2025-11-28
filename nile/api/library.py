@@ -200,7 +200,7 @@ class Library:
         )
 
         if not response.ok:
-            self.logger.error("There was an error getting versions")
+            self.logger.debug("There was an error getting versions")
             self.logger.debug(response.content)
             return
 
