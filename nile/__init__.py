@@ -7,5 +7,5 @@
 # ##   ###   mm##mm   ##mmmmmm  ##mmmmmm 
 # ""   """   """"""   """"""""  """""""" 
 
-version = "1.1.2"
-codename = "Will A. Zeppeli"
+version = "1.2.0"
+codename = "Robert Speedwagon"
