@@ -32,7 +32,6 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython"
 ]
 dependencies = [
-  "setuptools",
   "requests",
   "protobuf",
   "pycryptodome",
